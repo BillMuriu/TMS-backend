@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Statement</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
+
+        /* Apply Source Sans Pro font to the body */
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: aliceblue;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 20px; /* Adjust as needed */
+            left: 0;
+            right: 0;
+            text-align: center;
+        }        
+
+        #header {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        #property-details {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail {
+            margin-bottom: 8px;
+        }
+        
+        .title {
+            font-weight: bold;
+        }
+        
+        .value {
+            margin-left: 10px; /* Adjust as needed */
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #property-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+        #property-details h2 {
+            margin: 5px 0;
+        }
+
+        #summary {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 70%;
+            font-size: 14px;
+        }
+
+       
+        
+        #summary table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        #summary th, #summary td {
+            border-top: 1px solid #ddd; /* Only top border */
+            border-bottom: 1px solid #000000; /* Only bottom border */
+            padding: 8px;
+            text-align: left;
+        }
+        
+        #summary th {
+            background-color: #f2f2f2;
+        }
+        
+        
+
+        #expenses {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 70%;
+            font-size: 14px;
+        }
+
+        #expenses h2 {
+            align-self: center;
+        }
+
+        #tenant-data {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 50px;
+            font-size: 14px;
+        }
+        #detailed_property_statement {
+            align-self: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>Property Statement</h1>
+        
+        <div id="property-details">
+            <div class="detail">
+                <span class="title">Property Name:</span>
+                <span class="value">{{ property_name }}</span>
+            </div>
+            <div class="detail">
+                <span class="title">Date Created:</span>
+                <span class="value">{{ date_created }}</span>
+            </div>
+            <div class="detail">
+                <span class="title">Date Range:</span>
+                <span class="value">{{ start_date }} - {{ end_date }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="summary">
+        <h2>Summary</h2>
+        <table>
+            <tr>
+                <th>Total Amount Collected</th>
+                <td>{{ total_amount_paid }}</td>
+            </tr>
+            <tr>
+                <th>Total Expense Amount</th>
+                <td>{{ total_expense_amount }}</td>
+            </tr>
+            <tr>
+                <th>Earning Before Tax</th>
+                <td>{{ earning_before_tax }}</td>
+            </tr>
+            <tr>
+                <th>Tax {{ tax_rate }}%</th>
+                <td>{{ tax_amount }}</td>
+            </tr>
+            <tr style="border-bottom: '1px solid #fff'">
+                <th>Net Income</th>
+                <td>{{ net_income }}</td>
+            </tr>
+        </table>
+    </div>
+    
+
+    <div id="expenses">
+        <h2>Expenses</h2>
+        <table>
+            <tr>
+                <th>Expense Item</th>
+                <th>Notes</th>
+                <th>Amount</th>
+            </tr>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.expense_item }}</td>
+                <td>{{ expense.notes }}</td>
+                <td>{{ expense.amount }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2">Total:</td>
+                <td>{{ total_expenses_amount }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="tenant-data">
+        <h2 id="detailed_property_statement">Tenant Data</h2>
+        <table>
+            <tr>
+                <th>Tenant ID</th>
+                <th>Unit</th>
+                <th>Property Name</th>
+                <th>Phone Number</th>
+                <th>Rent</th>
+                <th>Water Bill</th>
+                <th>Deposit Invoices</th>
+                <th>Other Bills</th>
+                <th>Balance Carried Forward</th>
+                <th>Amount Due</th>
+                <th>Amount Paid</th>
+                <th>Balance</th>
+            </tr>
+            {% for tenant in tenants %}
+                <tr>
+                    <td>{{ tenant.tenant_id }}</td>
+                    <td>{{ tenant.unit }}</td>
+                    <td>{{ tenant.property_name }}</td>
+                    <td>{{ tenant.phone_number }}</td>
+                    <td>{{ tenant.category_sums.Rent }}</td>
+                    <td>{{ tenant.category_sums.Water_Bill }}</td>
+                    <td>{{ tenant.category_sums.Deposit_Invoices }}</td>
+                    <td>{{ tenant.category_sums.Other_Bills }}</td>
+                    <td>{{ tenant.balance_carried_forward }}</td>
+                    <td>{{ tenant.category_sums.Amount_Due }}</td>
+                    <td>{{ tenant.amount_paid }}</td>
+                    <td>{{ tenant.balance }}</td>
+                </tr>
+            {% endfor %}
+            <tr></tr>
+    <!-- Total row -->
+            <tr>
+                <td colspan="4">Total:</td>
+                <td>{{ total_category_amounts.Rent }}</td>
+                <td>{{ total_category_amounts.Water_Bill }}</td>
+                <td>{{ total_category_amounts.Deposit_Invoices }}</td>
+                <td>{{ total_category_amounts.Other_Bills }}</td>
+                <td></td> <!-- No balance carried forward for total -->
+                <td>{{ total_category_amounts.Amount_Due }}</td>
+                <td>{{ total_amount_paid }}</td>
+                <td>{{ total_balance }}</td>
+            </tr>
+        </table>
+    </div>
+    <footer>
+        Page <span class="page-number"></span> of <span class="total-pages"></span>
+    </footer>    
+</body>
+<script>
+    // Update page numbers
+window.onload = function() {
+    var pageNumbers = document.querySelectorAll('.page-number');
+    var totalPages = document.querySelectorAll('.total-pages');
+
+    for (var i = 0; i < pageNumbers.length; i++) {
+        pageNumbers[i].textContent = i + 1;
+        totalPages[i].textContent = pageNumbers.length;
+    }
+};
+
+</script>
+</html>
