@@ -1,6 +1,7 @@
 from django.db import models
 from core.models import Property, Unit
 from tenant.models import Tenant
+from property.models import Utilities
 from core.models import CustomUser
 from django.utils import timezone
 
@@ -43,6 +44,8 @@ class Invoice(models.Model):
         max_length=20, choices=INVOICE_STATUS_CHOICES)
     item_name = models.CharField(
         max_length=100, choices=ITEM_NAME_CHOICES, null=True, blank=True)
+    utility = models.OneToOneField(
+        Utilities, on_delete=models.CASCADE, related_name='invoice', null=True, blank=True, default=None)
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     description = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(

@@ -17,7 +17,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 # Invoice views
 
-
 class InvoiceListCreateAPIView(generics.ListCreateAPIView):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
@@ -25,12 +24,34 @@ class InvoiceListCreateAPIView(generics.ListCreateAPIView):
     filterset_fields = ['tenant']
 
     def create(self, request, *args, **kwargs):
+        # Check if data is provided for bulk creation
+        if isinstance(request.data, list):
+            return self.bulk_create_invoices(request)
+        else:
+            return self.single_create_invoice(request)
+
+    def single_create_invoice(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def bulk_create_invoices(self, request):
+        serializer = self.get_serializer(data=request.data, many=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_bulk_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_bulk_create(self, serializer):
+        # Perform bulk creation of invoices
+        instances = serializer.save()
+
+        # Process each invoice individually
+        for invoice in instances:
+            self.process_invoice(invoice)
+
+    def process_invoice(self, invoice):
         # Retrieve invoice data
-        invoice = serializer.instance
         property = invoice.property
         tenant = invoice.tenant
         invoice_date = invoice.invoice_date
@@ -61,9 +82,6 @@ class InvoiceListCreateAPIView(generics.ListCreateAPIView):
             tenant=tenant,
             invoice=invoice
         )
-
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class InvoiceRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
